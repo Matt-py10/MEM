@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Electroneumática y Electrohidráulica — FluidSIM &amp; Hologramas 3D | Institución Universitaria de Barranquilla (IUB)</title>
+  <meta name="description" content="Plataforma interactiva de Electroneumática y Electrohidráulica (ISBN 978-958-53526-1-2) con diseño institucional de la IUB, visor 3D holográfico en Three.js, circuitos, casos prácticos, bancos FESTO, PDFs locales y módulo de videos de YouTube." />
+  <link rel="icon" type="image/png" href="/img/logo-iub192px.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <!-- Three.js para Modelado Holográfico 3D de Circuitos Neumáticos e Hidráulicos -->
+  <script src="/js/three.min.js"></script>
+</head>
+<body>
+  <!-- =========================================================================
+       1. BARRA SUPERIOR OFICIAL ESTILO UNIBARRANQUILLA (GOV.CO #3366CC)
+       ========================================================================= -->
+  <div class="iub-gov-bar">
+    <div class="container topbar-inner">
+      <div class="topbar-left">
+        <a href="https://www.gov.co/" target="_blank" rel="noopener noreferrer" class="gov-brand-link">
+          <img src="/img/gov-co.png" alt="GOV.CO" class="gov-logo-img" />
+        </a>
+        <span class="topbar-divider">|</span>
+        <a href="https://www.unibarranquilla.edu.co/" target="_blank" rel="noopener noreferrer" class="topbar-link">
+          Portal IUB (unibarranquilla.edu.co) ↗
+        </a>
+        <span class="topbar-divider">|</span>
+        <a href="#autor-creador" class="topbar-link">
+          Autor: Ing. Jovanny Rafael Duque (MeKatrónica)
+        </a>
+      </div>
+      <div class="topbar-right">
+        <span class="view-mode-badge" id="currentRoleBadge">
+          <span class="status-dot"></span> Portal Académico Abierto • Ingeniería Mecatrónica IUB
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       2. HEADER PRINCIPAL OFICIAL IUB (Sticky-Master con Logos Reales IUB)
+       ========================================================================= -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#inicio" class="brand-identity" style="text-decoration:none;">
+        <img src="/img/HeaderIubLogo.png" alt="Institución Universitaria de Barranquilla IUB" class="iub-main-logo" />
+        <span class="brand-vertical-divider"></span>
+        <img src="/img/sello-icontec.png" alt="Acreditación IUB" class="iub-acreditacion-logo" />
+        <div class="brand-titles">
+          <span class="brand-uni" id="headerUniName">Electroneumática y Electrohidráulica</span>
+          <span class="brand-sub" id="headerFacultyName">Circuitos FluidSIM • Bancos FESTO • ISBN 978-958-53526-1-2</span>
+        </div>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación Principal">
+        <a href="#holograma-3d" class="nav-link active">Holograma 3D</a>
+        <a href="#autor-creador" class="nav-link">Autor &amp; Créditos</a>
+        <a href="#fundamentos-fluidsim" class="nav-link">Fundamentos &amp; FluidSIM</a>
+        <a href="#catalogo-practicas" class="nav-link">Circuitos y Casos</a>
+        <a href="#modulo-youtube" class="nav-link nav-link-yt">▶ Videos YouTube</a>
+        <a href="#simbologia-iso" class="nav-link">Componentes</a>
+        <a href="#inventario-datos" class="nav-link">Repositorio de Data</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Cinta de Comunicado Temático -->
+  <div class="announcement-ribbon">
+    <div class="container ribbon-inner">
+      <span class="ribbon-tag">RECURSOS 100% EN PROYECTO</span>
+      <p id="institutionAnnouncement">
+        Guías PDF Oficiales descargadas localmente + Paquetes .ZIP de FluidSIM + Curso Completo en Video de Electroneumática y Electrohidráulica.
+      </p>
+      <a href="#modulo-youtube" class="ribbon-cta">Explorar Videoteca YouTube →</a>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       3. HERO + LABORATORIO HOLOGRÁFICO 3D EN THREE.JS
+       ========================================================================= -->
+  <main id="inicio">
+    <section class="hero-section" id="holograma-3d">
+      <div class="container hero-grid">
+        <!-- Columna Izquierda: Selector de Circuito y Resumen -->
+        <div class="hero-content">
+          <div>
+            <div class="hero-badge" id="heroBadge">
+              UNIBARRANQUILLA (IUB) • ELECTRONEUMÁTICA Y ELECTROHIDRÁULICA (ISBN 978-958-53526-1-2)
+            </div>
+            <h1 class="hero-title" id="heroTitle">
+              Circuitos de Control Electroneumáticos y Electrohidráulicos con FluidSIM &amp; Gemelos 3D
+            </h1>
+            <p class="hero-description" id="heroDescription">
+              Plataforma interactiva basada en la obra del <strong>Ing. Jovanny Rafael Duque</strong> con los circuitos de un cilindro, la metodología paso a paso, los casos aplicados industriales, prácticas en banco FESTO de dos cilindros, documentos PDF locales y videos explicativos en YouTube.
+            </p>
+          </div>
+
+          <!-- Selector Rápido de Circuito para el Visor Holográfico -->
+          <div class="quick-preset-box">
+            <div class="preset-box-header">
+              <span class="preset-box-label">PROYECTAR CIRCUITO O CASO EN EL HOLOGRAMA 3D:</span>
+              <span class="preset-norm-pill">Simulación Interactiva Three.js</span>
+            </div>
+            <div class="preset-selector-row">
+              <select id="heroCircuitDropdown" class="circuit-master-select" aria-label="Seleccionar circuito o caso disponible">
+                <!-- Se llena dinámicamente con los circuitos y casos -->
+              </select>
+            </div>
+            <div class="preset-buttons-grid" id="heroPresetButtons">
+              <!-- Botones rápidos destacados -->
+            </div>
+          </div>
+
+          <!-- Tarjetas de Acceso Rápido a Módulos -->
+          <div class="hero-stats-grid">
+            <a href="#catalogo-practicas" class="stat-card" style="text-decoration:none;">
+              <span class="stat-value">Circuitos</span>
+              <span class="stat-label">y Casos Aplicados</span>
+            </a>
+            <a href="#inventario-datos" class="stat-card" style="text-decoration:none;">
+              <span class="stat-value">PDFs</span>
+              <span class="stat-label">Guías Oficiales Locales</span>
+            </a>
+            <a href="#fundamentos-fluidsim" class="stat-card" style="text-decoration:none;">
+              <span class="stat-value">FluidSIM</span>
+              <span class="stat-label">Paquetes .ZIP Locales</span>
+            </a>
+            <a href="#modulo-youtube" class="stat-card" style="text-decoration:none;">
+              <span class="stat-value">YouTube</span>
+              <span class="stat-label">Videos &amp; Playlists</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Visor Holográfico 3D (Three.js) -->
+        <div class="hologram-stage-wrapper">
+          <div class="hologram-card" id="hologramCard">
+            <div class="hologram-header">
+              <div class="holo-title-group">
+                <span class="holo-live-indicator"></span>
+                <div class="holo-title-text">
+                  <span class="holo-eyebrow">GEMELO DIGITAL 3D • SIMULACIÓN EN TIEMPO REAL</span>
+                  <h2 class="holo-circuit-title" id="holoActiveTitle">CIRCUITO Nº 1: Accionamiento directo de electroválvula monoestable</h2>
+                  <p class="holo-circuit-sub" id="holoActiveEquation">Ecuación: S1 → Y1 ON (1A1+) | Suelto → Y1 OFF (1A1-)</p>
+                </div>
+              </div>
+              <div class="holo-badges">
+                <span class="holo-chip" id="holoPressureBadge">6.0 bar</span>
+                <span class="holo-chip holo-chip-cyan" id="holoVoltageBadge">24V DC</span>
+              </div>
+            </div>
+
+            <!-- Barra de herramientas del visor -->
+            <div class="holo-toolbar">
+              <div class="holo-tool-group" role="group" aria-label="Cámara">
+                <button class="cam-btn active" data-cam="iso" title="Vista isométrica">Isométrica</button>
+                <button class="cam-btn" data-cam="front" title="Vista frontal">Frontal</button>
+                <button class="cam-btn" data-cam="top" title="Vista de planta">Planta</button>
+              </div>
+              <div class="holo-tool-group" role="group" aria-label="Visualización">
+                <button class="cam-btn" id="btnToggleExploded" title="Separar piezas (vista explosionada CAD)">🔧 Despiece</button>
+                <button class="cam-btn" id="btnToggleWireframe" title="Ver estructura interna (Rayos-X)">🩻 Rayos-X</button>
+                <button class="cam-btn active" id="btnToggleLabels" title="Mostrar/ocultar etiquetas de componentes">🏷️ Etiquetas</button>
+                <button class="cam-btn" id="btnToggleAutoOrbit" title="Rotación automática 360°">🔄 360°</button>
+              </div>
+              <div class="holo-tool-group" role="group" aria-label="Utilidades">
+                <button class="cam-btn" id="btnHoloSnapshot" title="Guardar captura PNG del visor">📸 Captura</button>
+                <button class="cam-btn" id="btnHoloFullscreen" title="Pantalla completa">⛶ Pantalla completa</button>
+              </div>
+            </div>
+
+            <!-- Lienzo WebGL Three.js (tamaño fijo: no se deforma al cambiar de circuito) -->
+            <div class="hologram-canvas-container" id="hologramCanvasContainer">
+              <!-- Ficha técnica del componente seleccionado con clic -->
+              <aside class="holo-info-panel hidden" id="holoInfoPanel" aria-live="polite">
+                <button type="button" class="holo-info-close" id="btnCloseHoloInfo" aria-label="Cerrar ficha">✕</button>
+                <span class="holo-info-tag" id="holoInfoTag">1A1</span>
+                <h4 id="holoInfoTitle">Componente</h4>
+                <p id="holoInfoDesc"></p>
+                <dl class="holo-info-specs" id="holoInfoSpecs"></dl>
+              </aside>
+
+              <!-- Diagrama Espacio-Fase (carrera vs fase) con cursor de reproducción -->
+              <div class="holo-oscilloscope-box" title="Diagrama Espacio-Fase del ciclo completo">
+                <div class="osc-header">
+                  <span>📈 DIAGRAMA ESPACIO-FASE</span>
+                  <span class="osc-legend" id="oscLegend"></span>
+                </div>
+                <canvas id="holoOscilloscopeCanvas" width="420" height="120"></canvas>
+              </div>
+
+              <div class="holo-interaction-hint">
+                Arrastra para rotar • Rueda para zoom • Haz clic en cualquier componente para ver su ficha
+              </div>
+            </div>
+
+            <!-- Telemetría en vivo (fuera del área 3D para no tapar la escena) -->
+            <div class="holo-telemetry-strip">
+              <div class="hud-metric">
+                <span class="hud-label">FASE ACTIVA</span>
+                <span class="hud-value" id="hudPhaseText">Ciclo Activo</span>
+              </div>
+              <div class="hud-metric">
+                <span class="hud-label">POSICIÓN DE VÁSTAGO(S)</span>
+                <span class="hud-value" id="hudActuatorPos">Carrera: 0%</span>
+              </div>
+              <div class="hud-metric">
+                <span class="hud-label">ESTADO ELÉCTRICO (24V DC)</span>
+                <span class="hud-value" id="hudValveState">Y1 / Sensores B1-B2</span>
+              </div>
+            </div>
+
+            <!-- Línea de tiempo interactiva: fases clicables + barra de progreso arrastrable + velocidad -->
+            <div class="holo-timeline">
+              <div class="holo-phase-chips" id="holoPhaseChips"></div>
+              <div class="holo-timeline-row">
+                <input type="range" id="holoTimeline" min="0" max="1000" value="0" aria-label="Posición dentro del ciclo" />
+                <div class="holo-speed-group" role="group" aria-label="Velocidad">
+                  <button type="button" class="speed-btn" data-speed="0.5">0.5×</button>
+                  <button type="button" class="speed-btn active" data-speed="1">1×</button>
+                  <button type="button" class="speed-btn" data-speed="2">2×</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Controles Operativos Inferiores del Holograma -->
+            <div class="hologram-controls-bar">
+              <div class="holo-btn-group">
+                <button class="holo-ctrl-btn primary" id="btnHoloPlayPause">
+                  <span id="playPauseIcon">⏸</span> <span id="playPauseText">Pausar Ciclo</span>
+                </button>
+                <button class="holo-ctrl-btn" id="btnHoloStep" title="Avanzar a la siguiente fase">⏭ Siguiente fase</button>
+                <button class="holo-ctrl-btn accent" id="btnHoloTriggerPulse">
+                  ⚡ Pulso Manual Solenoide Y1
+                </button>
+              </div>
+
+              <div class="holo-slider-group">
+                <label for="pressureRangeSlider">Presión (<span id="sliderPressureVal">6.0</span> bar):</label>
+                <input type="range" id="pressureRangeSlider" min="1" max="60" step="0.5" value="6" />
+              </div>
+
+              <div class="holo-download-quick">
+                <a href="/resources/pdfs/Circuito_01_Accionamiento_Directo_Electrovalvula_Monoestable.pdf" id="holoQuickPdf" target="_blank" class="holo-dl-link">
+                  📄 Abrir PDF Local
+                </a>
+                <a href="/resources/fluidsim/FluidSIM_CIR-01.zip" id="holoQuickZip" download class="holo-dl-link zip">
+                  📦 FluidSIM .ZIP
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         3B. DESTACADO ESPECIAL: CREADOR DEL BLOG (ING. JOVANNY DUQUE) Y CRÉDITOS DEL EQUIPO
+         ========================================================================= -->
+    <section class="author-spotlight-section" id="autor-creador">
+      <div class="container">
+        <div class="author-credits-grid">
+          <!-- Tarjeta Principal: Creador del Blog y Autor de los Libros/Circuitos -->
+          <article class="author-feature-card">
+            <div class="author-card-top">
+              <div class="author-avatar-wrapper">
+                <img src="/img/jovanny_duque_foto.jpg" alt="Ing. Jovanny Rafael Duque — Creador del Blog Ingeniería Mecatrónica J Duke" class="author-avatar-img" />
+                <span class="author-verified-badge" title="Autor Oficial">✓ Autor &amp; Docente IUB</span>
+              </div>
+              <div class="author-identity-info">
+                <span class="author-eyebrow">AUTOR DE LA OBRA Y CREADOR DEL BLOG OFICIAL MEKATRÓNICA</span>
+                <h2 class="author-name">Ing. Jovanny Rafael Duque</h2>
+                <p class="author-handle">INGENIERÍA MECATRÓNICA J DUKE • Docente e Investigador en Ingeniería Mecatrónica (Colombia)</p>
+                <blockquote class="author-quote">
+                  “Soy docente de Ingeniería Mecatrónica y me gusta compartir los resultados de investigación, material de estudio, actividades y prácticas. Atte. Jovanny Duke”
+                </blockquote>
+              </div>
+            </div>
+
+            <div class="author-banner-strip">
+              <img src="/img/mecatronica_jduke_banner.png" alt="Banner Oficial Ingeniería Mecatrónica J Duke" class="author-banner-img" />
+              <div class="author-links-cluster">
+                <a href="https://www.youtube.com/c/JovannyDuque?sub_confirmation=1" target="_blank" rel="noopener noreferrer" class="author-social-btn yt">
+                  ▶ Canal YouTube MEKATRÓNICA
+                </a>
+                <a href="https://www.blogger.com/profile/03306671421818967099" target="_blank" rel="noopener noreferrer" class="author-social-btn blog">
+                  👤 Perfil Oficial Blogger
+                </a>
+                <a href="https://www.researchgate.net/publication/371069686_CIRCUITOS_DE_CONTROL_ELECTRONEUMATICOS_Y_ELECTROHIDRAULICOS" target="_blank" rel="noopener noreferrer" class="author-social-btn rg">
+                  📘 Publicaciones ResearchGate
+                </a>
+                <a href="https://web.facebook.com/JDuKe1974" target="_blank" rel="noopener noreferrer" class="author-social-btn fb">
+                  🌐 Facebook Oficial (JDuKe)
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Tarjeta Derecha: Créditos de Desarrollo y Diseño de esta Plataforma Interactiva -->
+          <aside class="developers-credits-card">
+            <div>
+              <div class="credits-header-row">
+                <span class="credits-pill">CRÉDITOS DEL PROYECTO</span>
+              </div>
+              <h3 class="credits-card-title">Desarrollo y Diseño de la Plataforma Web Interactiva</h3>
+              <p class="credits-card-desc">
+                Arquitectura interactiva, motor de simulación CAD 3D (Three.js), centralización local de recursos FluidSIM y adaptación gráfica institucional realizada por:
+              </p>
+
+              <div class="developers-badges-list" id="developersCreditsList">
+                <div class="dev-member-pill">
+                  <div class="dev-avatar-circle">MH</div>
+                  <div class="dev-member-info">
+                    <strong>Mattius Holguín Blanco</strong>
+                    <span>Desarrollador de la Plataforma &amp; Estudiante de Ingeniería Mecatrónica (Unibarranquilla - IUB)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Datos de Contacto de Autoría del Desarrollador (Editables desde /admin) -->
+              <div class="dev-contact-strip">
+                <a href="mailto:mholguinb@unibarranquilla.edu.co" class="dev-contact-chip" id="devContactEmailLink">
+                  ✉️ <span id="devContactEmail">mholguinb@unibarranquilla.edu.co</span>
+                </a>
+                <a href="tel:3043345861" class="dev-contact-chip" id="devContactPhoneLink">
+                  📱 <span id="devContactPhone">3043345861</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="credits-footer-meta">
+              <span>🏛️ Institución Universitaria de Barranquilla (IUB)</span>
+              <span>⚡ Programa de Ingeniería Mecatrónica</span>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         4. FUNDAMENTOS, LIBROS OFICIALES, DESCARGA FLUIDSIM Y DIAGRAMAS REALES
+         ========================================================================= -->
+    <section class="section-block section-light" id="fundamentos-fluidsim">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="section-eyebrow">BASE TEÓRICA Y SOFTWARE • ING. JOVANNY RAFAEL DUQUE (IUB)</span>
+            <h2 class="section-title">Componentes, Libros Oficiales y Descarga de FluidSIM (3.6, 4.2 y 4.5)</h2>
+            <p class="section-subtitle">
+              Previo al estudio de los sistemas electroneumáticos y electrohidráulicos, revisa el funcionamiento, simbología y aplicación de los componentes principales, descarga los libros guía gratuitos y configura el simulador Festo FluidSIM.
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="/resources/pdfs/Estructura_Sistemas_Electroneumaticos_Electrohidraulicos.pdf" target="_blank" class="btn-primary-institutional">
+              📘 PDF Estructura de los Sistemas (Local)
+            </a>
+            <a href="/resources/pdfs/Guia_Descarga_FluidSIM_3.6_4.2_4.5.pdf" target="_blank" class="btn-outline-institutional">
+              💻 Guía Instalación FluidSIM (PDF Local)
+            </a>
+          </div>
+        </div>
+
+        <!-- 3 Tarjetas Maestras: 1) Libro Componentes, 2) Libro Curso Completo ISBN, 3) Software FluidSIM -->
+        <div class="cycles-grid">
+          <!-- Tarjeta 1: Libro Componentes -->
+          <article class="cycle-card">
+            <div>
+              <span class="cycle-level-badge">LIBRO GRATUITO • FUNDAMENTOS</span>
+              <h3 class="cycle-title">“Componentes de los Sistemas Electroneumáticos – Electrohidráulicos”</h3>
+              <p class="cycle-focus">
+                Estudio detallado de: <strong>pulsadores NO y NC</strong>, interruptores, finales de carrera mecánicos, <strong>sensores inductivos, capacitivos, fotoeléctricos y magnéticos</strong>, presostatos, <strong>relés electromecánicos</strong>, temporizadores con retardo a la conexión (<em>On-Delay</em>) y desconexión (<em>Off-Delay</em>), contador electromecánico y <strong>electroválvulas 3/2, 5/2, 5/3, 4/2 y 4/3</strong>.
+              </p>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">
+              <a href="https://www.researchgate.net/publication/351458721" target="_blank" rel="noopener" class="btn-dl-resource pdf">
+                📗 Descargar Libro en ResearchGate ↗
+              </a>
+              <a href="https://www.academia.edu/48871902" target="_blank" rel="noopener" class="btn-dl-resource">
+                📘 Ver en Academia.edu ↗
+              </a>
+              <a href="https://www.xn--mecatrnica-lbb.com.co/2021/12/componentes-de-los-sistemas.html" target="_blank" rel="noopener" class="btn-dl-resource">
+                🔗 Ver Tema como Entrada del Blog ↗
+              </a>
+            </div>
+          </article>
+
+          <!-- Tarjeta 2: Libro Curso Completo ISBN IUB -->
+          <article class="cycle-card">
+            <div>
+              <span class="cycle-level-badge">CURSO COMPLETO OFICIAL IUB • ISBN 978-958-53526-1-2</span>
+              <h3 class="cycle-title">“Circuitos de Control Electroneumáticos y Electrohidráulicos”</h3>
+              <p class="cycle-focus">
+                Obra de referencia académica del <strong>Ing. Jovanny Rafael Duque</strong> con toda la metodología de diseño en lógica cableada, diagramas espacio-fase, circuitos de 1, 2 y 3 cilindros, temporización, conteo de ciclos y casos industriales resueltos paso a paso.
+              </p>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">
+              <a href="/resources/pdfs/Metodologia_Paso_a_Paso_Circuitos_Electroneumaticos.pdf" target="_blank" class="btn-dl-resource pdf">
+                📄 Abrir PDF Metodología Paso a Paso (Local)
+              </a>
+              <a href="https://www.researchgate.net/publication/371069686_CIRCUITOS_DE_CONTROL_ELECTRONEUMATICOS_Y_ELECTROHIDRAULICOS" target="_blank" rel="noopener" class="btn-dl-resource">
+                📘 Descargar Libro Completo (ResearchGate) ↗
+              </a>
+              <a href="https://www.academia.edu/102399473/CIRCUITOS_DE_CONTROL_ELECTRONEUM%C3%81TICOS_Y_ELECTROHIDR%C3%81ULICOS" target="_blank" rel="noopener" class="btn-dl-resource">
+                🎓 Ver Libro en Academia.edu (ISBN) ↗
+              </a>
+            </div>
+          </article>
+
+          <!-- Tarjeta 3: Software FluidSIM 3.6, 4.2 y 4.5 -->
+          <article class="cycle-card">
+            <div>
+              <span class="cycle-level-badge">SIMULADOR FESTO FLUIDSIM 3.6 / 4.2 / 4.5</span>
+              <h3 class="cycle-title">Descarga Directa y Ejecución de FluidSIM 4.2 (<code>fl_sim_p.exe</code>)</h3>
+              <ul class="cycle-subjects-list" style="border-top:none;padding-top:4px;margin-bottom:12px;">
+                <li>1. Descarga el archivo <code>Festo_Fluidsim_Pneumatic_4.2.zip</code> directamente desde aquí (sin redirecciones).</li>
+                <li>2. Descomprime la carpeta con WinZip / WinRAR en tu equipo.</li>
+                <li>3. Abre la carpeta <code>Pneumatics</code> → entra en <code>bin</code>.</li>
+                <li>4. Ejecuta <code>fl_sim_p.exe</code> (o <code>fl_sim.exe</code>) y crea un acceso directo en tu escritorio.</li>
+              </ul>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <a href="/resources/fluidsim/Festo_Fluidsim_Pneumatic_4.2.zip" download="Festo_Fluidsim_Pneumatic_4.2.zip" class="btn-primary-institutional" style="justify-content:center;text-align:center;">
+                ⬇️ Descarga Directa FluidSIM 4.2 (.ZIP • 26.3 MB)
+              </a>
+              <a href="/resources/pdfs/Guia_Descarga_FluidSIM_3.6_4.2_4.5.pdf" target="_blank" class="btn-dl-resource pdf">
+                📄 Guía PDF de Instalación (Alojada en Proyecto)
+              </a>
+            </div>
+          </article>
+        </div>
+
+        <!-- Galería Visual de los Planos y Esquemas Originales Extraídos de la Página -->
+        <div class="schematics-gallery-card">
+          <div class="schematics-gallery-header">
+            <div>
+              <h3 class="schematics-gallery-title">Planos y Diagramas Originales de Banco de Pruebas FESTO (Alojados Localmente)</h3>
+              <p class="schematics-gallery-sub">Haz clic en cualquier plano o diagrama para abrirlo en el modal en alta resolución</p>
+            </div>
+          </div>
+          <div class="schematics-gallery-grid" id="schematicsGalleryGrid">
+            <button type="button" class="schem-thumb-card" data-diagram-idx="0">
+              <img src="/img/schematics/circuito_01_mando_directo.png" alt="Circuito 1 Mando Directo Electroneumático e Hidráulico" loading="lazy" />
+              <span>Circuito Nº 1: Mando Directo Electroneumático (5/2) / Hidráulico (4/2)</span>
+            </button>
+            <button type="button" class="schem-thumb-card" data-diagram-idx="1">
+              <img src="/img/schematics/C1.png" alt="Etapa de Potencia Neumática con Válvula 5/2 Monoestable y Reguladores" loading="lazy" />
+              <span>Etapa de Potencia Neumática (Cilindro + Reguladores 40% + 5/2)</span>
+            </button>
+            <button type="button" class="schem-thumb-card" data-diagram-idx="2">
+              <img src="/img/schematics/C1A.png" alt="Esquema de Mando Eléctrico 24V DC con Autorretención K1" loading="lazy" />
+              <span>Esquema Eléctrico de Mando 24V DC con Autorretención (K1 + Y1)</span>
+            </button>
+            <button type="button" class="schem-thumb-card" data-diagram-idx="3">
+              <img src="/img/schematics/1_SENSORES.png" alt="Prácticas con Sensores Magnéticos PNP y Temporizador" loading="lazy" />
+              <span>Circuito con Sensores Magnéticos PNP (A0/A1), Relés y TEMP1</span>
+            </button>
+            <button type="button" class="schem-thumb-card" data-diagram-idx="4">
+              <img src="/img/schematics/1_PRACTICA_2_CIL.png" alt="Mando Eléctrico Secuencia Dos Cilindros A+B+A-B-" loading="lazy" />
+              <span>Mando Eléctrico Secuencia Dos Cilindros (A+B+A-B-) K1–K3</span>
+            </button>
+            <button type="button" class="schem-thumb-card" data-diagram-idx="5">
+              <img src="/img/schematics/dobladora_electrohidraulica.png" alt="Dispositivo para Doblar Electrohidráulico 3 Cilindros" loading="lazy" />
+              <span>Ejemplo Resuelto: Dobladora Electrohidráulica (Croquis + Espacio-Fase)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         5. CATÁLOGO INTERACTIVO DE CIRCUITOS, CASOS APLICADOS Y PRÁCTICAS
+         ========================================================================= -->
+    <section class="section-block" id="catalogo-practicas">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="section-eyebrow">COLECCIÓN INTERACTIVA • DOCUMENTOS PDF Y FLUIDSIM LOCALES</span>
+            <h2 class="section-title">Circuitos y Casos Prácticos de Electroneumática y Electrohidráulica</h2>
+            <p class="section-subtitle">
+              Todos los circuitos, guías metodológicas, casos aplicados industriales y prácticas en banco FESTO se encuentran descargados y organizados dentro del proyecto. Filtra por categoría, proyéctalos en el Holograma 3D, abre su video en el modal o descarga su guía PDF.
+            </p>
+          </div>
+          <div class="catalog-search-box">
+            <input type="search" id="practiceSearchInput" placeholder="Buscar circuito, temporizador, 4/3, FIFO, contador, perforación..." aria-label="Buscar circuito o caso" />
+          </div>
+        </div>
+
+        <!-- Filtros por Bloque Temático (Sin números en las etiquetas) -->
+        <div class="category-filter-bar" id="categoryFilterBar">
+          <button class="filter-pill active" data-category="ALL">Todos los Circuitos y Casos</button>
+          <button class="filter-pill" data-category="Fundamentos & FluidSIM">Fundamentos y FluidSIM</button>
+          <button class="filter-pill" data-category="Circuitos 1 Cilindro (Nº 1-10)">Circuitos Básicos (Un Cilindro)</button>
+          <button class="filter-pill" data-category="Temporizados & Sensores (Nº 11-16)">Temporizados y Sensores</button>
+          <button class="filter-pill" data-category="Secuencias, Flancos & Contador (Nº 17-23)">Secuencias, Flancos y Contador</button>
+          <button class="filter-pill" data-category="Casos Aplicados Industriales">Casos Aplicados Industriales</button>
+          <button class="filter-pill" data-category="Prácticas en Banco FESTO (2 Cilindros)">Prácticas Banco FESTO (Dos Cilindros)</button>
+        </div>
+
+        <!-- Grilla de Circuitos y Casos -->
+        <div class="practices-grid" id="practicesGrid">
+          <!-- Renderizado dinámicamente desde app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         6. MÓDULO INTERACTIVO DE VIDEOS DE YOUTUBE Y LISTAS DE REPRODUCCIÓN
+         ========================================================================= -->
+    <section class="section-block section-youtube" id="modulo-youtube">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="section-eyebrow" style="color:#FFCC00;">CANAL DE YOUTUBE MEKATRÓNICA • ING. JOVANNY RAFAEL DUQUE</span>
+            <h2 class="section-title" style="color:#FFFFFF;">Videoteca Interactiva: Prácticas en Banco FESTO y Cursos en YouTube</h2>
+            <p class="section-subtitle" style="color:#CBD5E1;">
+              Explora los videos explicativos y listas de reproducción del canal oficial <strong>Mekatrónica</strong>. Puedes reproducirlos en el escenario principal, ampliarlos en el <strong>Modal de Cine YouTube</strong> o abrirlos directamente en YouTube.
+            </p>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button type="button" class="iub-btn-yellow-pill" id="btnOpenCinemaModalFromHeader" style="font-size:13.5px;padding:10px 20px;">
+              📺 Abrir Reproductor en Modal Ampliado
+            </button>
+            <a href="https://www.youtube.com/c/JovannyDuque?sub_confirmation=1" target="_blank" rel="noopener noreferrer" class="btn-outline-institutional" style="color:#FFFFFF;border-color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.08);">
+              ▶ Canal YouTube MEKATRÓNICA ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Escenario Principal Amplio + Tarjetas Espaciadas con Miniaturas -->
+        <div class="youtube-showcase-layout">
+          <!-- Reproductor Principal Destacado -->
+          <div class="youtube-player-card">
+            <div class="youtube-iframe-wrapper">
+              <iframe
+                id="activeYoutubeIframe"
+                src="https://www.youtube.com/embed/46TcPLrimMY"
+                title="Reproductor de Video Electroneumática y Electrohidráulica"
+                frameborder="0"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div class="youtube-active-meta">
+              <div class="youtube-active-badges">
+                <span class="yt-badge-live" id="activeVideoCategory">Fundamentos &amp; Componentes</span>
+                <span class="yt-badge-rel" id="activeVideoRelated">Circuito: FUND-02</span>
+              </div>
+              <h3 class="youtube-active-title" id="activeVideoTitle">
+                Componentes Electromecánicos de los Circuitos Eléctricos (Pulsadores, Relés, Temporizadores y Contadores)
+              </h3>
+              <p class="youtube-active-desc" id="activeVideoDesc">
+                Explicación detallada del funcionamiento interno, contactos NA/NC y simbología de pulsadores, finales de carrera, relés electromecánicos, temporizadores On-Delay/Off-Delay y contadores.
+              </p>
+              <div class="youtube-active-actions">
+                <button type="button" class="iub-btn-yellow-pill" id="btnExpandActiveVideoModal">
+                  📺 Ver en Modal Modo Cine
+                </button>
+                <a href="https://youtu.be/46TcPLrimMY" id="activeVideoDirectLink" target="_blank" rel="noopener noreferrer" class="btn-yt-external">
+                  ▶ Abrir en YouTube ↗
+                </a>
+                <a href="https://youtube.com/playlist?list=PLHTERkK4EZJqLulufruqo6rI99i-sSwjl" target="_blank" rel="noopener noreferrer" class="btn-yt-playlist">
+                  📚 Playlist Curso Online ↗
+                </a>
+                <a href="https://youtube.com/playlist?list=PLHTERkK4EZJrSElocHbXzjzLjKXq8RjIV" target="_blank" rel="noopener noreferrer" class="btn-yt-playlist">
+                  📐 Playlist Metodología Paso a Paso ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Catálogo Espacioso de Tarjetas de Video con Miniatura -->
+          <div class="youtube-catalog-panel">
+            <div class="yt-column-header">
+              <div>
+                <h4>Catálogo de Videos y Listas de Reproducción</h4>
+                <p class="yt-column-sub">Filtra por categoría y reproduce aquí o abre en el Modal Modo Cine</p>
+              </div>
+              <span class="yt-count-pill" id="ytTotalBadge">Videos &amp; Listas</span>
+            </div>
+            <div class="yt-filter-bar" id="ytFilterBar" aria-label="Filtrar videos por categoría">
+              <!-- Renderizado dinámicamente desde app.js -->
+            </div>
+            <div class="youtube-cards-grid" id="youtubeCardsList">
+              <!-- Renderizado dinámicamente desde app.js con miniaturas y espaciado amplio -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         7. PRONTUARIO DE COMPONENTES ELECTRONEUMÁTICOS Y ELECTROHIDRÁULICOS
+         ========================================================================= -->
+    <section class="section-block section-light" id="simbologia-iso">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="section-eyebrow">SIMBOLOGÍA Y EQUIPOS DE CONTROL • IEC 60617 &amp; DIN ISO 1219</span>
+            <h2 class="section-title">Síntesis de Equipos Electroneumáticos y Electrohidráulicos</h2>
+            <p class="section-subtitle">
+              Resumen interactivo de los equipos esenciales utilizados en los circuitos y casos prácticos de laboratorio.
+            </p>
+          </div>
+          <a href="/resources/pdfs/Estructura_Sistemas_Electroneumaticos_Electrohidraulicos.pdf" target="_blank" class="btn-outline-institutional">
+            📘 Abrir Manual de Estructura y Simbología (PDF)
+          </a>
+        </div>
+
+        <div class="iso-catalog-grid" id="isoCatalogGrid">
+          <!-- Renderizado dinámicamente -->
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         8. LISTADO MAESTRO DE TODA LA DATA DEL PROYECTO (PDFs + ZIPs FLUIDSIM)
+         ========================================================================= -->
+    <section class="section-block" id="inventario-datos">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="section-eyebrow">REPOSITORIO ACADÉMICO DIGITAL • ORGANIZADO POR CARPETAS</span>
+            <h2 class="section-title">Repositorio Maestro de Recursos (PDFs, Paquetes FluidSIM y Enlaces)</h2>
+            <p class="section-subtitle">
+              Explora las carpetas temáticas para descargar directamente guías en PDF, circuitos ejecutables de FluidSIM (.zip), bibliografía oficial e instalador, sin listas extensas en pantalla.
+            </p>
+          </div>
+          <div class="inventory-actions">
+            <button class="btn-primary-institutional" id="btnExportAllDataJson">
+              💾 Exportar Base de Datos (.JSON)
+            </button>
+          </div>
+        </div>
+
+        <div class="repo-controls-row">
+          <div class="repo-search-wrap">
+            <input
+              type="search"
+              id="repoSearchInput"
+              class="repo-search-input"
+              placeholder="🔍 Buscar guía, circuito, PDF o paquete por título o código..."
+              aria-label="Buscar en el repositorio de recursos"
+            />
+          </div>
+          <span class="repo-summary-pill" id="repoSummaryPill">Carpetas cargando...</span>
+        </div>
+
+        <div class="repo-folders-grid" id="repoFoldersGrid" role="tablist" aria-label="Carpetas del repositorio">
+          <!-- Carpetas temáticas renderizadas dinámicamente -->
+        </div>
+
+        <div class="inventory-table-card" id="repoActiveFolderCard">
+          <div class="repo-folder-header" id="repoActiveFolderHeader">
+            <div class="repo-folder-header-title">
+              <span class="repo-folder-open-icon">📂</span>
+              <div>
+                <h3 id="repoActiveFolderTitle">Cargando carpeta...</h3>
+                <p id="repoActiveFolderSub">Selecciona una carpeta arriba para ver sus archivos</p>
+              </div>
+            </div>
+            <span class="repo-folder-count-badge" id="repoActiveFolderCount">0 recursos</span>
+          </div>
+          <div class="table-responsive">
+            <table class="inventory-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Título del Recurso / Circuito / Guía</th>
+                  <th>Formato</th>
+                  <th>Descarga Directa</th>
+                  <th>Respaldo Nube</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody">
+                <!-- Renderizado dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================================
+       PIE DE PÁGINA CON IDENTIDAD VISUAL UNIBARRANQUILLA (IUB) Y CRÉDITOS
+       ========================================================================= -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col-brand">
+        <div class="footer-brand-row">
+          <img src="/img/LOGOIUB.png" alt="Logo IUB" style="height:52px;width:auto;background:#fff;padding:6px 10px;border-radius:10px;" />
+          <img src="/img/AlcaldiaBarranquilla.png" alt="Alcaldía de Barranquilla" style="height:44px;width:auto;background:#fff;padding:6px 10px;border-radius:10px;" />
+        </div>
+        <h3 class="footer-uni-title" id="footerUniName">Institución Universitaria de Barranquilla (IUB)</h3>
+        <p class="footer-uni-former" id="footerFormerName">
+          Autoría de Contenido y Circuitos: Ing. Jovanny Rafael Duque (ISBN 978-958-53526-1-2)
+        </p>
+        <p class="footer-desc">
+          Plataforma interactiva con diseño institucional IUB, documentos PDF locales, paquetes FluidSIM (.ct / .zip), modelados 3D holográficos en Three.js y videoteca de prácticas en banco FESTO.
+        </p>
+        <div class="footer-credits-box">
+          <span class="footer-credits-label">CREADOR Y DESARROLLADOR DE LA PLATAFORMA WEB INTERACTIVA:</span>
+          <div class="footer-credits-names" id="footerDevelopersText">
+            Desarrollado por: Mattius Holguín Blanco — Estudiante de Ingeniería Mecatrónica (IUB)
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Bloques Temáticos</h4>
+        <ul>
+          <li><a href="#autor-creador">Autor del Blog: Ing. Jovanny Rafael Duque</a></li>
+          <li><a href="#fundamentos-fluidsim">Componentes Electroneumáticos y FluidSIM 3.6/4.2/4.5</a></li>
+          <li><a href="#catalogo-practicas">Circuitos con Un Cilindro (Básicos, Temporizados, Contador)</a></li>
+          <li><a href="#catalogo-practicas">Metodología Paso a Paso y Casos Aplicados Industriales</a></li>
+          <li><a href="#catalogo-practicas">Prácticas en Banco FESTO con Dos Cilindros (A+B+A-B-)</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Enlaces Directos y Videoteca</h4>
+        <ul>
+          <li><a href="#modulo-youtube">Videoteca Embebida de Prácticas FESTO</a></li>
+          <li><a href="https://youtube.com/playlist?list=PLHTERkK4EZJqLulufruqo6rI99i-sSwjl" target="_blank" rel="noopener">Playlist Curso Online Electroneumática ↗</a></li>
+          <li><a href="https://youtube.com/playlist?list=PLHTERkK4EZJrSElocHbXzjzLjKXq8RjIV" target="_blank" rel="noopener">Playlist Metodología Paso a Paso ↗</a></li>
+          <li><a href="https://www.xn--mecatrnica-lbb.com.co/p/electroneumatica-electrohidraulica.html" target="_blank" rel="noopener">Blog Original MeKatrónica (Ing. Jovanny Duque) ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <span>© 2026 Institución Universitaria de Barranquilla (IUB) — Contenido Académico: Ing. Jovanny Rafael Duque.</span>
+        <span id="footerContactInfo">✉️ Autoría Web: mholguinb@unibarranquilla.edu.co | 📞 3043345861</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       MODAL 1: FICHA TÉCNICA DETALLADA DE CIRCUITO + ESQUEMA + DESCARGAS
+       ========================================================================= -->
+  <div class="modal-backdrop hidden" id="practiceDetailModal" role="dialog" aria-modal="true">
+    <div class="modal-window modal-large">
+      <div class="modal-header">
+        <div>
+          <span class="modal-code-badge" id="detailModalCode">CIRCUITO Nº 1</span>
+          <h3 class="modal-title" id="detailModalTitle">Detalle del Circuito</h3>
+        </div>
+        <button class="modal-close-btn" id="btnCloseDetailModal" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body" id="detailModalBody"></div>
+    </div>
+  </div>
+
+  <!-- MODAL 1C: VISOR DE PLANOS Y DIAGRAMAS ORIGINALES -->
+  <div class="modal-backdrop hidden" id="diagramLightboxModal" role="dialog" aria-modal="true">
+    <div class="modal-window modal-large">
+      <div class="modal-header">
+        <div>
+          <span class="modal-code-badge" id="diagramModalBadge">PLANO FLUIDSIM / NORMA ISO 1219</span>
+          <h3 class="modal-title" id="diagramModalTitle">Plano Técnico Original</h3>
+        </div>
+        <button class="modal-close-btn" id="btnCloseDiagramModal" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body diagram-modal-body">
+        <div class="diagram-modal-stage">
+          <img id="diagramModalImg" src="" alt="Plano técnico" />
+        </div>
+        <p class="diagram-modal-desc" id="diagramModalDesc"></p>
+        <div class="diagram-modal-actions">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn-outline-institutional" id="btnDiagramPrev">⏮ Anterior</button>
+            <button type="button" class="btn-outline-institutional" id="btnDiagramNext">Siguiente ⏭</button>
+          </div>
+          <a id="diagramModalDownload" href="#" download class="btn-primary-institutional">⬇️ Descargar Plano (.PNG)</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 1B: MODAL MODO CINE DE VIDEOS YOUTUBE (ESPACIOSO Y MODERNO)
+       ========================================================================= -->
+  <div class="modal-backdrop hidden" id="youtubeCinemaModal" role="dialog" aria-modal="true">
+    <div class="modal-window modal-youtube-cinema">
+      <div class="modal-header yt-modal-header">
+        <div class="yt-modal-title-wrap">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;">
+            <span class="yt-badge-live" id="modalYtCategory">Prácticas en Banco FESTO</span>
+            <span class="yt-badge-rel" id="modalYtRelated">Circuito Relacionado</span>
+            <span class="yt-badge-counter" id="modalYtCounter">1 / 1</span>
+          </div>
+          <h3 class="modal-title" id="modalYtTitle">Reproductor de Video</h3>
+        </div>
+        <button class="modal-close-btn" id="btnCloseYoutubeModal" aria-label="Cerrar Modal de Video">&times;</button>
+      </div>
+
+      <div class="modal-body yt-modal-body">
+        <div class="yt-modal-main-grid">
+          <!-- Columna Izquierda: Video en Grande 16:9 + Descripción Amplia -->
+          <div class="yt-modal-player-col">
+            <div class="youtube-iframe-wrapper yt-modal-iframe-box">
+              <iframe
+                id="modalYoutubeIframe"
+                src=""
+                title="Reproductor Modal YouTube"
+                frameborder="0"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
+
+            <div class="yt-modal-details-card">
+              <p class="yt-modal-desc" id="modalYtDesc"></p>
+              <div class="yt-modal-actions-bar">
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                  <button type="button" class="btn-outline-institutional" id="btnModalPrevVideo">⏮ Video Anterior</button>
+                  <button type="button" class="btn-outline-institutional" id="btnModalNextVideo">Siguiente Video ⏭</button>
+                </div>
+                <a href="https://youtu.be/46TcPLrimMY" id="modalYtDirectLink" target="_blank" rel="noopener noreferrer" class="btn-yt-external">
+                  ▶ Ver Directamente en YouTube ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Selector Espacioso de Otros Videos del Curso -->
+          <div class="yt-modal-sidebar">
+            <div class="yt-modal-sidebar-head">
+              <div>
+                <h4 class="yt-modal-sidebar-title">Lista de Reproducción</h4>
+                <p class="yt-modal-sidebar-sub">Cambia de video o lista sin salir del modal:</p>
+              </div>
+              <span class="yt-modal-list-count" id="modalYtListCount">0 items</span>
+            </div>
+            <div class="yt-modal-list" id="modalYoutubeList">
+              <!-- Se llena dinámicamente con tarjetas espaciadas -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-notification hidden" id="toastNotification"></div>
+
+  <script src="/js/hologram3d.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

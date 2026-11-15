@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Consola Editorial Admin — Electroneumática &amp; Electrohidráulica IUB</title>
+  <link rel="icon" type="image/png" href="/img/logo-iub192px.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+  <!-- =========================================================================
+       1. PUERTA DE ACCESO EXCLUSIVA PARA ADMINISTRADOR
+       ========================================================================= -->
+  <section class="auth-gate" id="adminAuthGate">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <div class="auth-brand-row">
+          <img src="/img/HeaderIubLogo.png" alt="Logo IUB" class="auth-brand-logo" />
+          <span class="auth-pill">ACCESO PRIVADO • ADMIN</span>
+        </div>
+        <h1>Consola Editorial del Portal</h1>
+        <p>
+          El portal público es abierto para estudiantes sin login. Inicia sesión para gestionar circuitos, videos, carpetas de archivos, autoría y seguridad.
+        </p>
+      </div>
+
+      <form class="auth-form" id="adminLoginForm" autocomplete="on">
+        <div class="form-group">
+          <label for="loginUsername">Usuario Administrador</label>
+          <input
+            type="text"
+            id="loginUsername"
+            name="username"
+            placeholder="Ingresa tu usuario"
+            required
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Contraseña</label>
+          <div class="password-input-wrap">
+            <input
+              type="password"
+              id="loginPassword"
+              name="password"
+              placeholder="Ingresa tu contraseña"
+              required
+              autocomplete="current-password"
+            />
+            <button type="button" class="btn-toggle-pass" id="btnTogglePass" aria-label="Mostrar u ocultar contraseña">👁️</button>
+          </div>
+        </div>
+
+        <div class="auth-error hidden" id="loginErrorBanner"></div>
+
+        <button type="submit" class="btn-primary full-width" id="btnLoginSubmit">
+          🔓 Iniciar Sesión Segura
+        </button>
+
+        <div class="auth-footer-links">
+          <a href="/" class="auth-back-link">← Ir al Blog Público</a>
+          <span style="color:#64748b;font-size:11.5px;">Cookie HttpOnly + Token CSRF</span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       2. CONSOLA DE ADMINISTRACIÓN COMPLETA
+       ========================================================================= -->
+  <div class="admin-workspace hidden" id="adminWorkspace">
+    <header class="admin-topbar">
+      <div class="topbar-brand">
+        <img src="/img/HeaderIubLogo.png" alt="IUB" />
+        <div>
+          <h2>Consola Editorial Admin • Electroneumática &amp; Electrohidráulica</h2>
+          <span>Edición guiada con vista previa en vivo y protección CSRF / HttpOnly</span>
+        </div>
+      </div>
+
+      <div class="topbar-controls">
+        <span class="admin-user-pill" id="topbarUsernamePill">👤 admin</span>
+        <span class="sync-status-pill" id="adminSyncStatus">● Todo guardado</span>
+        <a href="/" target="_blank" rel="noopener" class="btn-yellow">🌐 Ver Blog Público ↗</a>
+        <button type="button" class="btn-logout" id="btnAdminLogout" title="Bloquear y cerrar sesión">🔒 Salir</button>
+      </div>
+    </header>
+
+    <!-- Aviso de seguridad si sigue usando la contraseña inicial -->
+    <div class="must-change-banner hidden" id="mustChangeBanner">
+      <span>⚠️ Seguridad recomendada: estás usando la contraseña inicial por defecto. Cámbiala por una clave personal fuerte.</span>
+      <button type="button" class="btn-primary" style="padding:6px 14px;font-size:12px;" id="btnGoChangeInitialPass">
+        🔐 Cambiar Contraseña Ahora
+      </button>
+    </div>
+
+    <div class="admin-shell">
+      <aside class="admin-sidebar" aria-label="Módulos de Administración">
+        <span class="sidebar-section-label">Inicio</span>
+        <button type="button" class="nav-item-btn active" data-section="sec-overview">📊 Resumen &amp; Data</button>
+
+        <span class="sidebar-section-label">Contenido del Blog</span>
+        <button type="button" class="nav-item-btn" data-section="sec-practices">⚙️ Circuitos y Casos</button>
+        <button type="button" class="nav-item-btn" data-section="sec-youtube">🎬 Videoteca YouTube</button>
+        <button type="button" class="nav-item-btn" data-section="sec-repository">📁 Carpetas y Archivos</button>
+        <button type="button" class="nav-item-btn" data-section="sec-institution">✍️ Blog, Autor &amp; Créditos</button>
+
+        <span class="sidebar-section-label">Control y Auditoría</span>
+        <button type="button" class="nav-item-btn" data-section="sec-security">🔐 Seguridad y Data</button>
+      </aside>
+
+      <main class="admin-main">
+        <!-- SECCIÓN 1: RESUMEN INTELIGENTE Y DIAGNÓSTICO -->
+        <section class="admin-section active" id="sec-overview">
+          <div class="section-head">
+            <div>
+              <h1>Resumen General y Diagnóstico del Blog</h1>
+              <p>Supervisa rápidamente el estado de tus circuitos, enlaces, archivos y sesiones activas.</p>
+            </div>
+            <button type="button" class="btn-outline" id="btnRefreshOverview">🔄 Actualizar Todo</button>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">Circuitos y Casos</div>
+              <div class="kpi-value" id="kpiPracticesCount">0</div>
+              <div class="kpi-sub">Con gemelo 3D Three.js</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Videos / Playlists</div>
+              <div class="kpi-value" id="kpiVideosCount">0</div>
+              <div class="kpi-sub">Módulo YouTube Modo Cine</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Recursos en Carpetas</div>
+              <div class="kpi-value" id="kpiRepoCount">0</div>
+              <div class="kpi-sub" id="kpiFoldersSub">Carpetas temáticas</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Archivos en Servidor</div>
+              <div class="kpi-value" id="kpiDiskFilesCount">0</div>
+              <div class="kpi-sub" id="kpiDiskBreakdown">PDFs + Paquetes .ZIP</div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <h3>Accesos Directos de Edición</h3>
+            <div class="quick-actions-grid">
+              <button type="button" class="btn-primary" data-jump-sec="sec-practices">⚙️ Editar o Crear Circuito</button>
+              <button type="button" class="btn-outline" data-jump-sec="sec-youtube">🎬 Agregar / Editar Video</button>
+              <button type="button" class="btn-outline" data-jump-sec="sec-repository">⬆️ Subir PDF o FluidSIM .ZIP</button>
+              <button type="button" class="btn-outline" data-jump-sec="sec-institution">✍️ Editar Autoría y Créditos</button>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <h3>🩺 Diagnóstico Rápido de Enlaces y Recursos</h3>
+            <div id="overviewHealthList" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+
+          <div class="panel-card">
+            <h3>Estado del Archivo Maestro</h3>
+            <p class="mono" id="overviewDataMeta" style="font-size:13px;color:#334155;">Cargando estado...</p>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 2: CIRCUITOS Y CASOS (EDICIÓN GUIADA + VISTA PREVIA) -->
+        <section class="admin-section" id="sec-practices">
+          <div class="section-head">
+            <div>
+              <h1>Editor Guiado de Circuitos y Casos</h1>
+              <p>Selecciona un circuito a la izquierda o filtra por categoría. Usa los selectores para elegir PDF, .ZIP y escena 3D sin memorizar rutas.</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button type="button" class="btn-outline" id="btnDuplicatePractice">📋 Duplicar Seleccionado</button>
+              <button type="button" class="btn-primary" id="btnNewPractice">+ Nuevo Circuito</button>
+            </div>
+          </div>
+
+          <div class="split-editor">
+            <div class="list-panel">
+              <input type="search" class="list-search" id="adminPracticeSearch" placeholder="🔍 Buscar circuito por ID o título..." />
+              <div class="chip-filter-bar" id="adminPracticeCategoryBar"></div>
+              <div class="items-scroll" id="adminPracticesList"></div>
+            </div>
+
+            <div class="panel-card">
+              <!-- Tarjeta de Vista Previa en Vivo -->
+              <div class="live-preview-card" id="practiceLivePreviewCard">
+                <span class="live-preview-eyebrow" id="previewPracticeMeta">VISTA PREVIA EN EL BLOG • BLOQUE</span>
+                <div class="live-preview-title" id="previewPracticeTitle">Título del Circuito</div>
+                <div class="live-preview-meta" id="previewPracticeStatusTags"></div>
+              </div>
+
+              <h3 id="practiceFormHeading">Editando Circuito</h3>
+              <form id="adminPracticeForm" class="form-grid-2">
+                <input type="hidden" id="editPracticeIndex" value="0" />
+
+                <div class="form-group">
+                  <label for="fieldPracticeId">Código Interno (ID)</label>
+                  <input type="text" id="fieldPracticeId" required />
+                </div>
+                <div class="form-group">
+                  <label for="fieldPracticeCode">Etiqueta Visible en Tarjeta</label>
+                  <input type="text" id="fieldPracticeCode" required />
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="fieldPracticeTitle">Título del Circuito o Caso</label>
+                  <input type="text" id="fieldPracticeTitle" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="fieldPracticeCategory">Bloque Temático / Categoría</label>
+                  <input type="text" id="fieldPracticeCategory" list="practiceCategorySuggestions" required />
+                  <datalist id="practiceCategorySuggestions">
+                    <option value="Fundamentos & FluidSIM"></option>
+                    <option value="Circuitos 1 Cilindro (Nº 1-10)"></option>
+                    <option value="Temporizados & Sensores (Nº 11-16)"></option>
+                    <option value="Secuencias, Flancos & Contador (Nº 17-23)"></option>
+                    <option value="Casos Aplicados Industriales"></option>
+                    <option value="Prácticas en Banco FESTO (2 Cilindros)"></option>
+                  </datalist>
+                </div>
+
+                <div class="form-group">
+                  <label for="fieldPracticeVoltage">Tensión / Mando Eléctrico</label>
+                  <input type="text" id="fieldPracticeVoltage" placeholder="24V DC" required />
+                </div>
+
+                <div class="form-group span-2">
+                  <label>Escena 3D del Visor Holográfico (Elige visualmente)</label>
+                  <input type="hidden" id="fieldPracticeHologram" value="double_cylinder" />
+                  <div class="visual-3d-grid" id="visual3dPicker">
+                    <button type="button" class="visual-3d-btn" data-3d-val="single_cylinder">
+                      <span>🔩 1 Cilindro Simple</span>
+                      <strong>Simple / 3-2</strong>
+                      <span>FRL + válvula monoestable</span>
+                    </button>
+                    <button type="button" class="visual-3d-btn" data-3d-val="double_cylinder">
+                      <span>⚙️ 1 Cilindro Doble</span>
+                      <strong>Doble Efecto 5/2</strong>
+                      <span>Sensores A0 / A1</span>
+                    </button>
+                    <button type="button" class="visual-3d-btn" data-3d-val="sequence_ab">
+                      <span>🔄 2 Cilindros (A / B)</span>
+                      <strong>Banco FESTO</strong>
+                      <span>Secuencia A+ B+ A- B-</span>
+                    </button>
+                    <button type="button" class="visual-3d-btn" data-3d-val="hydraulic_press">
+                      <span>🛠️ Prensa Hidráulica</span>
+                      <strong>Válvula 4/3 (50 bar)</strong>
+                      <span>Grupo bomba P / T</span>
+                    </button>
+                    <button type="button" class="visual-3d-btn" data-3d-val="plc_station">
+                      <span>🏭 Estación 3 Cilindros</span>
+                      <strong>Multi-Actuador</strong>
+                      <span>FIFO / Dobladora / PLC</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="fieldPracticePressure">Presión Nominal (bar)</label>
+                  <input type="number" step="0.5" id="fieldPracticePressure" required />
+                </div>
+                <div class="form-group">
+                  <label for="fieldPracticeEquation">Ecuación / Secuencia de Movimiento</label>
+                  <input type="text" id="fieldPracticeEquation" required />
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="fieldPracticeSummary">Explicación Técnica para el Estudiante</label>
+                  <textarea id="fieldPracticeSummary" rows="3" required></textarea>
+                </div>
+
+                <!-- Selector fácil de PDF -->
+                <div class="form-group">
+                  <label for="fieldPracticePdf">Guía PDF Asociada</label>
+                  <input type="text" id="fieldPracticePdf" placeholder="Elige abajo o escribe enlace..." />
+                  <div class="picker-inline-row">
+                    <select id="pickerPracticePdf" aria-label="Elegir PDF existente en el servidor">
+                      <option value="">-- Elegir PDF guardado --</option>
+                    </select>
+                    <a href="#" target="_blank" rel="noopener" class="btn-xs-link" id="linkTestPdf">Abrir ↗</a>
+                  </div>
+                </div>
+
+                <!-- Selector fácil de ZIP -->
+                <div class="form-group">
+                  <label for="fieldPracticeZip">Paquete FluidSIM (.ZIP)</label>
+                  <input type="text" id="fieldPracticeZip" placeholder="Elige abajo o escribe enlace..." />
+                  <div class="picker-inline-row">
+                    <select id="pickerPracticeZip" aria-label="Elegir paquete ZIP guardado en el servidor">
+                      <option value="">-- Elegir .ZIP guardado --</option>
+                    </select>
+                    <a href="#" download class="btn-xs-link" id="linkTestZip">Probar ⬇</a>
+                  </div>
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="fieldPracticeVideoUrl">Video o Playlist de YouTube Asociado (Opcional)</label>
+                  <input type="url" id="fieldPracticeVideoUrl" list="youtubeUrlSuggestions" placeholder="Pega una URL o elige un video registrado..." />
+                  <datalist id="youtubeUrlSuggestions"></datalist>
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="fieldPracticeObjectives">Objetivos de Aprendizaje (Uno por línea)</label>
+                  <textarea id="fieldPracticeObjectives" rows="3"></textarea>
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="fieldPracticeSteps">Pasos de Operación / Simulación (Uno por línea)</label>
+                  <textarea id="fieldPracticeSteps" rows="4"></textarea>
+                </div>
+
+                <div class="form-actions span-2">
+                  <button type="submit" class="btn-primary">💾 Guardar Cambios del Circuito</button>
+                  <button type="button" class="btn-danger-outline" id="btnDeletePractice">🗑️ Eliminar Circuito</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 3: VIDEOTECA YOUTUBE -->
+        <section class="admin-section" id="sec-youtube">
+          <div class="section-head">
+            <div>
+              <h1>Videoteca Interactiva YouTube</h1>
+              <p>Pega cualquier enlace de video o playlist y se detectará automáticamente su miniatura y reproductor embebido.</p>
+            </div>
+            <button type="button" class="btn-primary" id="btnNewYoutubeVideo">+ Nuevo Video / Playlist</button>
+          </div>
+
+          <div class="split-editor">
+            <div class="list-panel">
+              <input type="search" class="list-search" id="adminYoutubeSearch" placeholder="🔍 Filtrar video o playlist..." />
+              <div class="items-scroll" id="adminYoutubeList"></div>
+            </div>
+
+            <div class="panel-card">
+              <div class="yt-preview-box" style="margin-bottom:18px;" id="ytAdminPreviewBox">
+                <img id="ytAdminPreviewImg" src="/img/schematics/circuito_01_mando_directo.png" alt="Miniatura YouTube" />
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px;">
+                    <span class="preview-status-tag" id="ytAdminTypeBadge">🎬 Video Individual</span>
+                    <a href="#" target="_blank" rel="noopener" class="btn-xs-link" id="ytAdminOpenLink">Ver en YouTube ↗</a>
+                  </div>
+                  <strong style="font-size:13.5px;display:block;" id="ytAdminPreviewTitle">Vista previa</strong>
+                  <span class="mono" style="font-size:11px;color:#475569;word-break:break-all;" id="ytAdminPreviewEmbed"></span>
+                </div>
+              </div>
+
+              <h3 id="youtubeFormHeading">Editar Video Seleccionado</h3>
+              <form id="adminYoutubeForm" class="form-grid-2">
+                <input type="hidden" id="editYoutubeIndex" value="-1" />
+
+                <div class="form-group">
+                  <label for="ytIdInput">Código del Video (ej. VID-07)</label>
+                  <input type="text" id="ytIdInput" required />
+                </div>
+                <div class="form-group">
+                  <label for="ytCategoryInput">Categoría en la Videoteca</label>
+                  <input type="text" id="ytCategoryInput" list="ytCategorySuggestions" required />
+                  <datalist id="ytCategorySuggestions"></datalist>
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="ytTitleInput">Título del Video o Playlist</label>
+                  <input type="text" id="ytTitleInput" required />
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="ytUrlInput">Enlace de YouTube (youtu.be, watch o playlist)</label>
+                  <input type="url" id="ytUrlInput" placeholder="https://youtu.be/..." required />
+                </div>
+
+                <div class="form-group">
+                  <label for="ytRelatedInput">Circuito Relacionado</label>
+                  <input type="text" id="ytRelatedInput" list="circuitIdSuggestions" placeholder="Ej: CIR-06 o Curso General" />
+                  <datalist id="circuitIdSuggestions"></datalist>
+                </div>
+                <div class="form-group">
+                  <label for="ytDurationInput">Etiqueta / Duración Visible</label>
+                  <input type="text" id="ytDurationInput" placeholder="Ej: Video HD • 12 min" />
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="ytDescInput">Descripción Breve</label>
+                  <textarea id="ytDescInput" rows="3" required></textarea>
+                </div>
+
+                <div class="form-actions span-2">
+                  <button type="submit" class="btn-primary">💾 Guardar Video en Videoteca</button>
+                  <button type="button" class="btn-danger-outline" id="btnDeleteYoutubeVideo">🗑️ Eliminar Video</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 4: CARPETAS Y ARCHIVOS DEL REPOSITORIO -->
+        <section class="admin-section" id="sec-repository">
+          <div class="section-head">
+            <div>
+              <h1>Carpetas del Repositorio y Subida de Archivos</h1>
+              <p>Arrastra archivos `.pdf`, `.zip` o `.ct` para publicarlos en una carpeta temática. El servidor valida su firma binaria real por seguridad.</p>
+            </div>
+          </div>
+
+          <div class="split-editor">
+            <div class="panel-card">
+              <h3>⬆️ Subir Nuevo Archivo al Servidor</h3>
+              <form id="adminFileUploadForm" class="form-grid-2">
+                <div class="form-group span-2">
+                  <label class="upload-dropzone" id="repoDropzone" for="uploadFileInput">
+                    <span style="font-size:26px;">📄📦</span>
+                    <strong id="dropzoneTitle">Haz clic aquí o arrastra un archivo .PDF / .ZIP / .CT</strong>
+                    <span id="dropzoneSub">Máximo 50 MB • Se validará cabecera binaria automáticamente</span>
+                    <input type="file" id="uploadFileInput" accept=".pdf,.zip,.ct" class="hidden" required />
+                  </label>
+                </div>
+
+                <div class="form-group">
+                  <label for="uploadResourceId">Código / ID (ej. CIR-24)</label>
+                  <input type="text" id="uploadResourceId" placeholder="CIR-24" required />
+                </div>
+                <div class="form-group">
+                  <label for="uploadResourceCategory">Carpeta Temática en el Blog</label>
+                  <input type="text" id="uploadResourceCategory" list="repoCategorySuggestions" placeholder="Elige o crea una carpeta..." required />
+                  <datalist id="repoCategorySuggestions"></datalist>
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="uploadResourceTitle">Título Visible en la Carpeta</label>
+                  <input type="text" id="uploadResourceTitle" placeholder="Se auto-sugiere al elegir el archivo" required />
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="uploadResourceNotes">Notas / Ecuación (Opcional)</label>
+                  <input type="text" id="uploadResourceNotes" />
+                </div>
+
+                <div class="form-group span-2">
+                  <label for="uploadLinkPracticeSelect">Vincular automáticamente a un Circuito (Opcional)</label>
+                  <select id="uploadLinkPracticeSelect">
+                    <option value="">-- Solo publicar en la carpeta del Repositorio --</option>
+                  </select>
+                </div>
+
+                <div class="form-actions span-2">
+                  <button type="submit" class="btn-primary">⬆️ Subir y Publicar Archivo</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+                <h3 style="margin-bottom:0;">Contenido por Carpetas</h3>
+                <span class="mono" style="font-size:12px;color:#475569;" id="adminRepoCountBadge">0 ítems</span>
+              </div>
+
+              <div class="chip-filter-bar" id="adminRepoFolderBar"></div>
+              <input type="search" class="list-search" id="adminRepoSearch" placeholder="🔍 Filtrar dentro de las carpetas..." />
+
+              <form id="adminEditRepoForm" class="form-grid-2 hidden" style="padding:14px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;margin-bottom:14px;">
+                <input type="hidden" id="editRepoIndex" value="-1" />
+                <div class="form-group">
+                  <label for="repoEditId">Código / ID</label>
+                  <input type="text" id="repoEditId" required />
+                </div>
+                <div class="form-group">
+                  <label for="repoEditCategory">Mover a Carpeta Temática</label>
+                  <input type="text" id="repoEditCategory" list="repoCategorySuggestions" required />
+                </div>
+                <div class="form-group span-2">
+                  <label for="repoEditTitle">Título del Recurso</label>
+                  <input type="text" id="repoEditTitle" required />
+                </div>
+                <div class="form-group">
+                  <label for="repoEditDrive">Respaldo Google Drive (Opcional)</label>
+                  <input type="url" id="repoEditDrive" placeholder="https://drive.google.com/..." />
+                </div>
+                <div class="form-group">
+                  <label for="repoEditMega">Respaldo Mega (Opcional)</label>
+                  <input type="url" id="repoEditMega" placeholder="https://mega.nz/..." />
+                </div>
+                <div class="form-actions span-2">
+                  <button type="submit" class="btn-primary">💾 Guardar Cambios del Recurso</button>
+                  <button type="button" class="btn-outline" id="btnCancelRepoEdit">Cancelar</button>
+                </div>
+              </form>
+
+              <div class="items-scroll" id="adminRepoList" style="max-height:460px;"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 5: BLOG, AUTORÍA Y CRÉDITOS -->
+        <section class="admin-section" id="sec-institution">
+          <div class="section-head">
+            <div>
+              <h1>Identidad del Blog, Autoría y Créditos</h1>
+              <p>Personaliza los textos de cabecera, tu información de contacto y el equipo desarrollador visible en el blog.</p>
+            </div>
+          </div>
+
+          <div class="live-preview-card" id="creditsLivePreview">
+            <span class="live-preview-eyebrow">VISTA PREVIA EN TIEMPO REAL • TARJETA DE CRÉDITOS DEL BLOG</span>
+            <div class="live-preview-title" id="previewCreditsNames">Mattius Holguín Blanco</div>
+            <div class="live-preview-meta" id="previewCreditsContact"></div>
+          </div>
+
+          <div class="panel-card">
+            <form id="adminInstitutionForm" class="form-grid-2">
+              <div class="form-group">
+                <label for="instNameInput">Nombre de la Institución</label>
+                <input type="text" id="instNameInput" required />
+              </div>
+              <div class="form-group">
+                <label for="instFacultyInput">Subtítulo / Facultad</label>
+                <input type="text" id="instFacultyInput" required />
+              </div>
+              <div class="form-group">
+                <label for="instDepartmentInput">Departamento / Subtítulo Secundario</label>
+                <input type="text" id="instDepartmentInput" required />
+              </div>
+              <div class="form-group">
+                <label for="instFormerNameInput">Crédito Autor Contenido (Footer)</label>
+                <input type="text" id="instFormerNameInput" required />
+              </div>
+              <div class="form-group span-2">
+                <label for="instHeroBadgeInput">Etiqueta Superior del Hero</label>
+                <input type="text" id="instHeroBadgeInput" required />
+              </div>
+              <div class="form-group span-2">
+                <label for="instHeroTitleInput">Título Principal del Hero</label>
+                <input type="text" id="instHeroTitleInput" required />
+              </div>
+              <div class="form-group span-2">
+                <label for="instHeroDescInput">Descripción Principal del Hero</label>
+                <textarea id="instHeroDescInput" rows="3" required></textarea>
+              </div>
+              <div class="form-group span-2">
+                <label for="instAnnouncementInput">Cinta de Comunicado Superior</label>
+                <input type="text" id="instAnnouncementInput" required />
+              </div>
+
+              <div class="form-group">
+                <label for="instEmailInput">Correo Electrónico de Autoría Web</label>
+                <input type="email" id="instEmailInput" required />
+              </div>
+              <div class="form-group">
+                <label for="instPhoneInput">Teléfono de Contacto</label>
+                <input type="text" id="instPhoneInput" required />
+              </div>
+
+              <div class="form-group span-2">
+                <label for="instDevelopersInput">Desarrolladores (Uno por línea: Nombre — Rol)</label>
+                <textarea id="instDevelopersInput" rows="3" required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="instSourceBlogInput">URL del Blog Fuente Original</label>
+                <input type="url" id="instSourceBlogInput" />
+              </div>
+              <div class="form-group">
+                <label for="instYoutubeChannelInput">URL Canal de YouTube</label>
+                <input type="url" id="instYoutubeChannelInput" />
+              </div>
+
+              <div class="form-actions span-2">
+                <button type="submit" class="btn-primary">💾 Guardar Textos, Autoría y Créditos</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 6: SEGURIDAD REFORZADA, AUDITORÍA Y DATA JSON -->
+        <section class="admin-section" id="sec-security">
+          <div class="section-head">
+            <div>
+              <h1>Seguridad, Sesiones y Scripts de Data</h1>
+              <p>Control de acceso privado, rotación de sesiones activas, registro de auditoría y gestión directa de `iub_portal_data.json`.</p>
+            </div>
+          </div>
+
+          <div class="security-shield-grid">
+            <div class="shield-badge">🛡️ Cookie HttpOnly + SameSite=Lax</div>
+            <div class="shield-badge">🔑 Token Anti-CSRF en Mutaciones</div>
+            <div class="shield-badge">🔐 Clave Hash scrypt + Salt Aleatorio</div>
+            <div class="shield-badge">🚫 Bloqueo Anti Fuerza Bruta (5 intentos)</div>
+            <div class="shield-badge">📦 Validación Magic-Bytes en Subidas</div>
+            <div class="shield-badge" id="activeSessionsBadge">💻 Sesiones Activas: 1</div>
+          </div>
+
+          <div class="split-editor" style="grid-template-columns:1fr 1fr;">
+            <div class="panel-card">
+              <h3>🔐 Cambiar Usuario y Contraseña Privada</h3>
+              <form id="adminChangeCredsForm" class="form-grid-2">
+                <div class="form-group span-2">
+                  <label for="secCurrentPassword">Contraseña Actual</label>
+                  <input type="password" id="secCurrentPassword" required autocomplete="current-password" />
+                </div>
+                <div class="form-group span-2">
+                  <label for="secNewUsername">Usuario Administrador</label>
+                  <input type="text" id="secNewUsername" required minlength="3" />
+                </div>
+                <div class="form-group span-2">
+                  <label for="secNewPassword">Nueva Contraseña (mínimo 8 caracteres)</label>
+                  <input type="password" id="secNewPassword" minlength="8" placeholder="Usa letras, números y símbolos" />
+                  <div class="strength-meter-wrap">
+                    <div class="strength-bar-track"><div class="strength-bar-fill" id="passStrengthBar"></div></div>
+                    <span class="strength-label" id="passStrengthLabel">Fortaleza: escribe al menos 8 caracteres</span>
+                  </div>
+                </div>
+                <div class="form-group span-2">
+                  <label for="secConfirmPassword">Confirmar Nueva Contraseña</label>
+                  <input type="password" id="secConfirmPassword" minlength="8" placeholder="Repite la nueva contraseña" />
+                </div>
+                <div class="form-actions span-2">
+                  <button type="submit" class="btn-primary">🔑 Guardar Nuevas Credenciales</button>
+                  <button type="button" class="btn-outline" id="btnRevokeOtherSessions">🔄 Cerrar Otras Sesiones</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel-card">
+              <h3>🗄️ Respaldo y Scripts de Data (JSON)</h3>
+              <p style="font-size:13px;color:#475569;margin-bottom:16px;line-height:1.5;">
+                Exporta la base de datos actual, importa una versión editada (validando su estructura) o ejecuta el script base de fábrica.
+              </p>
+
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <button type="button" class="btn-outline" id="btnDownloadMasterJson">
+                  📥 Exportar iub_portal_data.json
+                </button>
+
+                <label class="btn-outline" style="cursor:pointer;justify-content:center;">
+                  📤 Importar y Aplicar JSON Maestro (.json)
+                  <input type="file" id="importMasterJsonInput" accept=".json" class="hidden" />
+                </label>
+
+                <hr style="border:none;border-top:1px solid #e2e8f0;margin:4px 0;" />
+
+                <button type="button" class="btn-danger-outline" id="btnFactoryReset">
+                  🔄 Ejecutar Script Inicial (Restaurar Data de Fábrica)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <h3 style="margin-bottom:0;">📋 Registro de Auditoría y Seguridad</h3>
+              <button type="button" class="btn-outline" style="padding:6px 12px;font-size:12px;" id="btnRefreshAudit">🔄 Actualizar Log</button>
+            </div>
+            <div class="audit-table-wrap">
+              <table class="audit-table">
+                <thead>
+                  <tr>
+                    <th>Fecha / Hora</th>
+                    <th>Evento</th>
+                    <th>Usuario</th>
+                    <th>Detalle</th>
+                    <th>IP</th>
+                  </tr>
+                </thead>
+                <tbody id="adminAuditTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="adminToast"></div>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

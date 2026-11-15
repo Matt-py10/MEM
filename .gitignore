@@ -1,0 +1,9 @@
+# Credenciales y auditoría local del panel /admin
+data/admin_auth.json
+data/admin_audit.json
+
+# Dependencias y archivos temporales
+node_modules/
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,28 @@
+{
+  "name": "iub-mem-fluidsim-portal",
+  "version": "1.0.0",
+  "description": "Portal Interactivo de Laboratorios de Mantenimiento Electromecánico (MEM), Mecatrónica y FluidSIM 3D - Institución Universitaria de Barranquilla (IUB)",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "setup": "node scripts/generate-resources.js",
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "Unibarranquilla",
+    "IUB",
+    "MEM",
+    "Mantenimiento Electromecánico",
+    "Ingeniería Mecatrónica",
+    "FluidSIM",
+    "Three.js",
+    "Neumática",
+    "Electroneumática",
+    "Electrohidráulica"
+  ],
+  "author": "Facultad de Ingenierías - Institución Universitaria de Barranquilla (IUB)",
+  "license": "MIT"
+}
