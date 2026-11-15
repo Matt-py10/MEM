@@ -1015,3 +1015,36 @@ h1, h2, h3, h4 {
     grid-column: span 1;
   }
 }
+
+@media (max-width: 760px) {
+  .auth-gate {
+    padding: 14px;
+  }
+  .auth-card {
+    padding: 22px 18px;
+  }
+  .admin-topbar {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .topbar-brand h2 {
+    font-size: 14px;
+  }
+  .topbar-brand span {
+    display: none;
+  }
+  .topbar-controls {
+    width: 100%;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .admin-main {
+    padding: 14px;
+  }
+  .panel-card {
+    padding: 16px 14px;
+  }
+  .dropzone-box {
+    padding: 18px 12px;
+  }
+}

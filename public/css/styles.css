@@ -53,6 +53,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
@@ -63,6 +64,7 @@ body {
   color: var(--text-main);
   line-height: 1.65;
   font-size: 15px;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -808,6 +810,8 @@ code, pre, .mono {
   font-size: 12.2px;
   font-weight: 700;
   text-decoration: none;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   transition: all 0.18s;
 }
 
@@ -1484,8 +1488,13 @@ code, pre, .mono {
 /* ==========================================================================
    5. CATÁLOGO DE CIRCUITOS Y CASOS PRÁCTICOS FLUIDSIM
    ========================================================================== */
+.catalog-search-box {
+  width: 100%;
+  max-width: 360px;
+}
+
 .catalog-search-box input {
-  width: 360px;
+  width: 100%;
   padding: 11px 18px;
   border-radius: 50px;
   border: 1.5px solid var(--border-strong);
@@ -1533,7 +1542,7 @@ code, pre, .mono {
 
 .practices-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
   gap: 26px;
 }
 
@@ -1955,7 +1964,7 @@ code, pre, .mono {
 
 .youtube-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   gap: 20px;
 }
 
@@ -2458,7 +2467,7 @@ code, pre, .mono {
    ========================================================================== */
 .iso-catalog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: 22px;
 }
 
@@ -3691,24 +3700,360 @@ code, pre, .mono {
 }
 
 @media (max-width: 760px) {
-  .hologram-canvas-container {
-    height: 360px;
+  .container {
+    padding: 0 16px;
   }
-  .holo-telemetry-strip {
-    grid-template-columns: 1fr;
+
+  /* Topbar y navegación compactas en móvil */
+  .institutional-topbar,
+  .iub-gov-bar {
+    padding: 7px 0;
+    font-size: 11px;
+  }
+  .topbar-inner {
+    justify-content: center;
+    gap: 6px 10px;
+    text-align: center;
+  }
+  .topbar-left,
+  .topbar-right {
+    justify-content: center;
+    gap: 6px 10px;
+  }
+  .topbar-divider {
+    display: none;
+  }
+
+  .site-header {
+    position: relative;
+  }
+  .header-inner {
+    padding: 10px 16px;
+    gap: 10px;
+  }
+  .brand-identity {
+    width: 100%;
+    gap: 10px;
+  }
+  .iub-main-logo {
+    height: 38px;
+  }
+  .brand-vertical-divider {
+    height: 28px;
+  }
+  .iub-acreditacion-logo {
+    height: 30px;
+  }
+  .brand-uni {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  .brand-sub {
+    font-size: 10.8px;
+    line-height: 1.25;
+  }
+  .main-nav {
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 6px;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .main-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .nav-link {
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 12.2px;
+    padding: 6px 12px;
+  }
+
+  .ribbon-inner {
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    font-size: 12px;
+  }
+
+  /* Hero y stats */
+  .hero-section {
+    padding: 22px 0 32px;
+  }
+  .hero-title {
+    font-size: 22px;
+    line-height: 1.24;
+  }
+  .hero-description {
+    font-size: 13.8px;
+  }
+  .quick-preset-box {
+    padding: 14px;
+  }
+  .preset-box-header {
+    flex-wrap: wrap;
+  }
+  .hero-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  /* Visor 3D adaptado a pantallas pequeñas */
+  .hologram-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px;
+    gap: 10px;
+  }
+  .holo-badges {
+    max-width: none;
+    justify-content: flex-start;
+  }
+  .holo-toolbar {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .holo-tool-group {
+    flex-wrap: wrap;
+  }
+  .holo-tool-group .cam-btn {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+  .hologram-canvas-container {
+    height: 310px;
+  }
+  .holo-hud-overlay {
+    top: 8px;
+    left: 8px;
+    gap: 4px;
+  }
+  .hud-metric {
+    padding: 4px 8px;
   }
   .holo-oscilloscope-box {
     right: 8px;
     bottom: 8px;
-    width: min(230px, calc(100% - 16px));
+    width: min(172px, calc(100% - 16px));
+    padding: 5px 6px;
   }
   .holo-oscilloscope-box canvas {
-    height: 68px;
+    height: 48px;
+  }
+  .osc-header {
+    font-size: 8px;
+    margin-bottom: 3px;
   }
   .holo-interaction-hint {
     display: none;
   }
-  .holo-badges {
-    max-width: none;
+  .holo-telemetry-strip {
+    grid-template-columns: 1fr;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .holo-timeline {
+    padding: 10px 12px;
+  }
+  .holo-timeline-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .hologram-controls-bar {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  .hologram-controls-bar .holo-btn-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .holo-ctrl-btn {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+  .holo-download-quick {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  /* Créditos, secciones, galería de esquemas y tarjetas */
+  .author-spotlight-section {
+    padding: 32px 0;
+  }
+  .author-feature-card,
+  .developers-credits-card {
+    padding: 18px 16px;
+    gap: 16px;
+  }
+  .author-name {
+    font-size: 20px;
+  }
+  .author-banner-strip {
+    justify-content: center;
+    text-align: center;
+  }
+  .author-banner-img {
+    max-width: 100%;
+    height: auto;
+    max-height: 52px;
+  }
+  .author-links-cluster {
+    justify-content: center;
+  }
+  .credits-footer-meta {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .section-block,
+  .section-youtube {
+    padding: 44px 0;
+  }
+  .section-header {
+    margin-bottom: 22px;
+    gap: 14px;
+  }
+  .section-title {
+    font-size: 22px;
+  }
+  .section-subtitle {
+    font-size: 14px;
+  }
+  .schematics-gallery-card {
+    padding: 18px 14px;
+  }
+  .schematics-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .schem-thumb-card {
+    padding: 10px;
+  }
+  .schem-thumb-card img {
+    height: 90px;
+  }
+
+  .practices-grid,
+  .iso-catalog-grid,
+  .youtube-cards-grid,
+  .repo-folders-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .practice-card-top {
+    padding: 16px 16px 10px;
+  }
+  .card-action-row-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* YouTube */
+  .youtube-catalog-panel {
+    padding: 18px 14px;
+  }
+  .youtube-active-meta {
+    padding: 18px 16px;
+    gap: 12px;
+  }
+  .youtube-active-title {
+    font-size: 18px;
+  }
+
+  /* Normativa ISO */
+  .iso-card {
+    padding: 16px;
+    gap: 14px;
+  }
+  .iso-symbol-frame {
+    width: 76px;
+    height: 66px;
+  }
+
+  /* Repositorio convertido en tarjetas legibles en móvil */
+  .repo-search-wrap {
+    min-width: 0;
+    width: 100%;
+  }
+  .repo-folder-header {
+    padding: 14px 16px;
+  }
+  .inventory-table thead {
+    display: none;
+  }
+  .inventory-table,
+  .inventory-table tbody,
+  .inventory-table tr,
+  .inventory-table td {
+    display: block;
+    width: 100%;
+  }
+  .inventory-table tr {
+    padding: 14px 16px;
+    border-bottom: 1.5px solid var(--border-subtle);
+  }
+  .inventory-table td {
+    padding: 4px 0;
+    border-bottom: none;
+  }
+  .inventory-table td:last-child {
+    margin-top: 8px;
+  }
+  .inventory-table td:last-child .btn-dl-resource {
+    width: 100%;
+    justify-content: center;
+    padding: 9px 12px;
+  }
+
+  /* Modales y toast */
+  .modal-backdrop {
+    padding: 8px;
+  }
+  .modal-window {
+    max-height: 94dvh;
+    border-radius: 14px;
+  }
+  .modal-header,
+  .yt-modal-header {
+    padding: 14px 16px;
+    gap: 10px;
+  }
+  .modal-header .modal-title,
+  .yt-modal-header .modal-title {
+    font-size: 16px;
+  }
+  .modal-body,
+  .yt-modal-body {
+    padding: 14px 16px;
+  }
+  .yt-modal-sidebar {
+    max-height: 280px;
+    padding: 12px;
+  }
+  .yt-modal-item-thumb-wrap {
+    width: 76px;
+    height: 46px;
+  }
+  .diagram-modal-stage {
+    min-height: 200px;
+    padding: 10px;
+  }
+  .toast-notification {
+    left: 12px;
+    right: 12px;
+    bottom: 14px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .preset-buttons-grid,
+  .card-action-row,
+  .card-action-row-3,
+  .yt-card-actions {
+    grid-template-columns: 1fr;
+  }
+  .hologram-canvas-container {
+    height: 280px;
   }
 }
