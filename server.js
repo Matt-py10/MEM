@@ -44,6 +44,8 @@ const MIME_TYPES = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
+  '.woff': 'font/woff',
   '.pdf': 'application/pdf',
   '.zip': 'application/zip',
   '.ct': 'text/plain; charset=utf-8',
@@ -216,14 +218,34 @@ function getValidSession(req) {
   return { token, ...sess };
 }
 
-function buildSecurityHeaders(extraHeaders = {}, isAdminRoute = false) {
+const responseRequestMap = new WeakMap();
+
+const CSP_HEADER = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://i.ytimg.com https://img.youtube.com",
+  "font-src 'self' data:",
+  "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
+  "connect-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'"
+].join('; ');
+
+function buildSecurityHeaders(extraHeaders = {}, isAdminRoute = false, req = null) {
   const base = {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
-    'Referrer-Policy': isAdminRoute ? 'same-origin' : 'strict-origin-when-cross-origin'
+    'Referrer-Policy': isAdminRoute ? 'same-origin' : 'strict-origin-when-cross-origin',
+    'Content-Security-Policy': CSP_HEADER,
+    'Cache-Control': isAdminRoute ? 'no-store, no-cache, must-revalidate' : 'no-cache'
   };
+  if (req && isHttpsRequest(req)) {
+    base['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains';
+  }
   if (isAdminRoute) {
-    base['Cache-Control'] = 'no-store, no-cache, must-revalidate';
     base['X-Robots-Tag'] = 'noindex, nofollow';
   }
   return { ...base, ...extraHeaders };
@@ -231,6 +253,7 @@ function buildSecurityHeaders(extraHeaders = {}, isAdminRoute = false) {
 
 function sendJson(res, statusCode, payload, extraHeaders = {}, isAdminRoute = false) {
   const body = JSON.stringify(payload);
+  const req = responseRequestMap.get(res) || null;
   res.writeHead(
     statusCode,
     buildSecurityHeaders(
@@ -239,7 +262,8 @@ function sendJson(res, statusCode, payload, extraHeaders = {}, isAdminRoute = fa
         'Cache-Control': 'no-store',
         ...extraHeaders
       },
-      isAdminRoute
+      isAdminRoute,
+      req
     )
   );
   res.end(body);
@@ -349,6 +373,7 @@ if (!fs.existsSync(DATA_FILE)) {
 }
 
 const server = http.createServer(async (req, res) => {
+  responseRequestMap.set(res, req);
   try {
     const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     const pathname = decodeURIComponent(parsedUrl.pathname);
@@ -361,7 +386,7 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(204, buildSecurityHeaders({
         'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, X-CSRF-Token'
-      }));
+      }, false, req));
       return res.end();
     }
 
@@ -717,14 +742,24 @@ const server = http.createServer(async (req, res) => {
 
     const safePath = path.normalize(path.join(PUBLIC_DIR, relativePath));
     if (!safePath.startsWith(PUBLIC_DIR)) {
-      res.writeHead(403, buildSecurityHeaders());
+      res.writeHead(403, buildSecurityHeaders({}, false, req));
       return res.end('Acceso denegado');
     }
 
     if (fs.existsSync(safePath) && fs.statSync(safePath).isFile()) {
       const ext = path.extname(safePath).toLowerCase();
       const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-      const headers = buildSecurityHeaders({ 'Content-Type': contentType }, isAdminStatic);
+      const isPrivateStatic = isAdminStatic || relativePath === 'css/admin.css' || relativePath === 'js/admin.js';
+      const cacheControl = isAdminStatic
+        ? 'no-store, no-cache, must-revalidate'
+        : isPrivateStatic || ext === '.html'
+          ? 'no-cache'
+          : 'public, max-age=3600';
+      const headers = buildSecurityHeaders(
+        { 'Content-Type': contentType, 'Cache-Control': cacheControl },
+        isAdminStatic,
+        req
+      );
 
       if (parsedUrl.searchParams.get('download') === '1' || ext === '.zip') {
         headers['Content-Disposition'] = `attachment; filename="${path.basename(safePath)}"`;
@@ -735,7 +770,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    res.writeHead(404, buildSecurityHeaders({ 'Content-Type': 'text/plain; charset=utf-8' }));
+    res.writeHead(404, buildSecurityHeaders({ 'Content-Type': 'text/plain; charset=utf-8' }, false, req));
     res.end('Recurso no encontrado en el portal IUB');
   } catch (err) {
     console.error('Error en servidor:', err);

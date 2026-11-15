@@ -1,5 +1,5 @@
 /**
- * CONTROLADOR DE LA CONSOLA EDITORIAL / ADMIN (/admin)
+ * CONTROLADOR DE LA CONSOLA EDITORIAL (/admin)
  * Seguridad: HttpOnly Session + CSRF Token + Inactividad 20 min + Auditoría
  * UX: Edición guiada, vista previa en vivo, selector visual 3D, Drag & Drop y diagnóstico rápido
  */
@@ -741,7 +741,7 @@
   }
 
   // ==========================================================================
-  // EVENTOS DEL PANEL ADMIN
+  // EVENTOS DE LA CONSOLA EDITORIAL
   // ==========================================================================
   function bindEvents() {
     ['mousemove', 'keydown', 'click'].forEach((ev) => {
