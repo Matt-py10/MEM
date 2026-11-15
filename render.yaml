@@ -3,7 +3,7 @@ services:
     name: iub-mem-fluidsim-portal
     runtime: node
     plan: free
-    buildCommand: ""
+    buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /healthz
     envVars:
